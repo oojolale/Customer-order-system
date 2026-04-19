@@ -1,0 +1,81 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: submitform
+
+  # 数据源配置 (H2 内嵌数据库，无需安装，开箱即用)
+  datasource:
+    url: jdbc:h2:file:./data/submitform;AUTO_SERVER=TRUE;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+
+  # H2 控制台 (可通过 /h2-console 访问数据库)
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: true
+
+  # SQL 初始化
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db/schema.sql
+
+  # Thymeleaf
+  thymeleaf:
+    cache: false
+    encoding: UTF-8
+    mode: HTML
+    prefix: classpath:/templates/
+    suffix: .html
+
+  # 文件上传配置
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 50MB
+      max-request-size: 100MB
+
+  # 邮件发送配置
+  mail:
+    host: smtp.qq.com
+    port: 465
+    username: 你的QQ邮箱@qq.com
+    password: 授权码
+    protocol: smtp
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
+          socketFactory:
+            class: javax.net.ssl.SSLSocketFactory
+            port: 465
+
+# MyBatis-Plus
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      id-type: AUTO
+      logic-delete-field: isDeleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+# 文件上传路径
+upload:
+  path: ./uploads/
+
+# 邮件内容配置
+mail:
+  subject: "【客户下单系统】项目需求提交确认"
+  templatePath: submit-email

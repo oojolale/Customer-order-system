@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle} + ' - 客户下单系统'">提交详情 - 客户下单系统</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%232563eb'/><text x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='Arial,sans-serif' font-size='14' font-weight='700' fill='white'>下</text></svg>">
+    <meta name="description" content="客户下单系统 需求详情">
+    <meta name="theme-color" content="#2563eb">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- 顶部导航 -->
+<header class="header">
+    <div class="container">
+        <div class="logo">
+            <a href="/">
+                <span class="logo-text">客户下单系统</span>
+                <span class="logo-sub">需求提交平台</span>
+            </a>
+        </div>
+        <nav class="nav">
+            <a href="/" class="nav-link">提交需求</a>
+            <a href="/manage" class="nav-link active">提交记录</a>
+        </nav>
+    </div>
+</header>
+
+<section class="hero hero-sm">
+    <div class="container">
+        <div class="detail-breadcrumb">
+            <a href="/manage">提交记录</a>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            <span th:text="'需求 #' + ${form.id}">需求 #1</span>
+        </div>
+        <h1 class="hero-title" th:text="'需求 #' + ${form.id}">需求 #1</h1>
+        <div class="detail-status-row">
+            <span th:class="'status-badge status-' + ${form.status}" th:text="${statusText}">待处理</span>
+            <time th:text="${#temporals.format(form.createTime, 'yyyy年MM月dd日 HH:mm')}">2024年01月01日 12:00</time>
+        </div>
+    </div>
+</section>
+
+<main class="main">
+    <div class="container">
+        <div class="detail-card">
+
+            <!-- 分类 -->
+            <div class="detail-section">
+                <div class="detail-label">
+                    <span class="label-num">01</span> 分类
+                </div>
+                <div class="detail-value">
+                    <div class="tag-list">
+                        <span th:each="cat : ${categoryList}" class="tag tag-blue tag-lg" th:text="${cat}"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 产品类型 -->
+            <div class="detail-section">
+                <div class="detail-label">
+                    <span class="label-num">02</span> 产品类型
+                </div>
+                <div class="detail-value">
+                    <span class="tag tag-purple tag-lg" th:text="${form.productType}"></span>
+                </div>
+            </div>
+
+            <!-- 计划书 -->
+            <div class="detail-section">
+                <div class="detail-label">
+                    <span class="label-num">03</span> 计划书
+                </div>
+                <div class="detail-value">
+                    <span th:if="${form.needPlan == 1}" class="tag tag-green tag-lg">✓ 需要提供开发计划、设计稿、视效UI、执行验收及售后</span>
+                    <span th:if="${form.needPlan != 1}" class="tag tag-gray tag-lg">× 不需要</span>
+                </div>
+            </div>
+
+            <!-- 项目规模 -->
+            <div class="detail-section">
+                <div class="detail-label">
+                    <span class="label-num">04</span> 项目规模
+                </div>
+                <div class="detail-value">
+                    <span class="tag tag-orange tag-lg" th:text="${form.projectScale}"></span>
+                </div>
+            </div>
+
+            <!-- 项目资料 -->
+            <div class="detail-section" th:if="${form.projectInfo != null and !form.projectInfo.isEmpty()}">
+                <div class="detail-label">
+                    <span class="label-num">05</span> 项目资料
+                </div>
+                <div class="detail-value">
+                    <div class="content-box" th:text="${form.projectInfo}"></div>
+                </div>
+            </div>
+
+            <!-- 附件 -->
+            <div class="detail-section" th:if="${!attachmentList.isEmpty()}">
+                <div class="detail-label">
+                    <span class="label-num">05</span> 上传附件
+                </div>
+                <div class="detail-value">
+                    <div class="attachment-list">
+                        <div th:each="file : ${attachmentList}" class="attachment-item">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+                            </svg>
+                            <a th:href="@{/download(path=${file['path']}, name=${file['name']})}"
+                               th:text="${file['name']}"
+                               class="attachment-link"
+                               target="_blank">附件</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 留言服务 -->
+            <div class="detail-section">
+                <div class="detail-label">
+                    <span class="label-num">06</span> 留言服务
+                </div>
+                <div class="detail-value">
+                    <div class="content-box content-message" th:text="${form.message}"></div>
+                </div>
+            </div>
+
+            <!-- 客户邮箱 -->
+            <div class="detail-section" th:if="${form.clientEmail != null and !form.clientEmail.isEmpty()}">
+                <div class="detail-label">
+                    <span class="label-num">07</span> 客户邮箱
+                </div>
+                <div class="detail-value">
+                    <div class="content-box">
+                        <span th:text="${form.clientEmail}"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 提交信息 -->
+            <div class="detail-section detail-meta-section">
+                <div class="detail-meta-grid">
+                    <div class="meta-item">
+                        <span class="meta-label">提交 IP</span>
+                        <span class="meta-value" th:text="${form.submitIp ?: '-'}">-</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">提交时间</span>
+                        <span class="meta-value" th:text="${#temporals.format(form.createTime, 'yyyy-MM-dd HH:mm:ss')}">-</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">状态</span>
+                        <span th:class="'status-badge status-' + ${form.status}" th:text="${statusText}">-</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 返回按钮 -->
+        <div class="detail-actions">
+            <a href="/manage" class="btn-back">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15 18 9 12 15 6"/>
+                </svg>
+                返回记录列表
+            </a>
+            <a href="/" class="btn-submit">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                提交新需求
+            </a>
+        </div>
+
+    </div>
+</main>
+
+<footer class="footer">
+    <div class="container">
+        <p>&copy; 2024 客户下单系统 · 需求提交平台</p>
+    </div>
+</footer>
+
+</body>
+</html>
